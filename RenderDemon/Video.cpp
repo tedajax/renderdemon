@@ -1,5 +1,6 @@
 #include "Video.h"
 #include <cmath>
+#include <algorithm>
 
 Video::Video(int width, int height, SDL_Renderer* renderer)
     : m_width(width),
@@ -36,6 +37,10 @@ void Video::clear()
 {
     SDL_SetRenderDrawColor(m_renderer, m_clearColor.r, m_clearColor.g, m_clearColor.b, 255);
     SDL_RenderClear(m_renderer);
+
+    setDrawColor(m_clearColor.r, m_clearColor.g, m_clearColor.b);
+    fillRect(0, 0, m_width, m_height);
+    setDrawColor(m_drawColor.r, m_drawColor.g, m_drawColor.b);
 }
 
 void Video::present()
@@ -90,7 +95,7 @@ void Video::pointc(int x, int y, int count)
     int c = count;
     if (pos + c >= m_surface->w * m_surface->h)
     {
-        c = m_surface->w * m_surface->h;
+        c = (m_surface->w * m_surface->h) - pos;
     }
     for (int i = 0; i < c; ++i)
     {
@@ -117,6 +122,7 @@ void Video::points(int* data, int count)
 
 void Video::vline(int x, int y1, int y2)
 {
+    if (y1 > y2) { std::swap(y1, y2); }
     for (int y = y1; y <= y2; ++y)
     {
         point(x, y);
@@ -125,6 +131,7 @@ void Video::vline(int x, int y1, int y2)
 
 void Video::hline(int y, int x1, int x2)
 {
+    if (x1 > x2) { std::swap(x1, x2); }
     int right = x2;
     if (right > m_width) { right = m_width; }
     pointc(x1, y, (right - x1));
@@ -132,16 +139,31 @@ void Video::hline(int y, int x1, int x2)
 
 void Video::line(int x1, int y1, int x2, int y2)
 {
-    int xdiff = abs(x2 - x1);
-    int ydiff = abs(y2 - y1);
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
 
-    if (xdiff == 0)
+    if (dx == 0)
     {
         vline(x1, y1, y2);
+        return;
     }
-    else if (ydiff == 0)
+    else if (dy == 0)
     {
         hline(y1, x1, x2);
+        return;
+    }
+
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = (dx > dy ? dx : -dy) / 2, e2;
+
+    while (true)
+    {
+        point(x1, y1);
+        if (x1 == x2 && y1 == y2) break;
+        e2 = err;
+        if (e2 > -dx) { err -= dy; x1 += sx; }
+        if (e2 < dy) { err += dx; y1 += sy; }
     }
 }
 
@@ -188,16 +210,21 @@ void Video::test()
     line(0, 0, 200, 200);*/
 
     setDrawColor(0, 255, 0);
-    point(100, 100);
-    point(101, 100);
-    point(102, 100);
-    point(103, 100);
-    point(104, 100);
-    point(105, 100);
-    point(106, 100);
-    point(107, 100);
-    point(108, 100);
+    point(100, 10);
     rect(50, 50, 150, 75);
-    floodFillRecur(55, 55);
-    fillRect(50, 10, 40, 30);
+
+    setDrawColor(255, 255, 0);
+    line(200, 200, 300, 250);
+
+    static f32 angle = 0.f;
+    angle += 0.01f;
+
+    int px = 250;
+    int py = 250;
+    int r = 100;
+    int x2 = (int)(cosf(angle) * r) + px;
+    int y2 = (int)(sinf(angle) * r) + py;
+    line(px, py, x2, y2);
+
+    
 }
