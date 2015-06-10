@@ -142,51 +142,6 @@ void Video::fillRect(int x1, int y1, int x2, int y2)
     }
 }
 
-void Video::circle(int x, int y, int r, int segments)
-{
-    ellipse(x, y, r, r, segments);
-}
-
-void Video::fillCircle(int x, int y, int r, int segments)
-{
-    fillEllipse(x, y, r, r, segments);
-}
-
-void Video::ellipse(int x, int y, int rx, int ry, int segments)
-{
-    f32 delta = ((f32)M_PI * 2.f) / (f32)segments;
-    f32 angle = 0.f;
-
-    for (int i = 0; i < segments; ++i)
-    {
-        f32 nextAngle = angle + delta;
-
-        int x1 = (int)(cosf(angle) * rx) + x;
-        int y1 = (int)(sinf(angle) * ry) + y;
-        int x2 = (int)(cosf(nextAngle) * rx) + x;
-        int y2 = (int)(sinf(nextAngle) * ry) + y;
-        line(x1, y1, x2, y2);
-
-        angle = nextAngle;
-    }
-}
-
-void Video::fillEllipse(int x, int y, int rx, int ry, int segments)
-{
-    int halfry = ry / 2;
-    int from = y - halfry;
-    int to = y + halfry;
-
-    for (int i = from; i < to; ++i)
-    {
-        f32 p = f32(i - from) / (f32)ry;
-        f32 w = acosf(p * 2.f - 1.f) * rx;
-
-        int halfw = w / 2.f;
-        hline(i, x - halfw, x + halfw);
-    }
-}
-
 void Video::test()
 {
     /*setDrawColor(255, 0, 0);
@@ -204,8 +159,4 @@ void Video::test()
     point(108, 100);
     rect(50, 50, 150, 75);
     fillRect(50, 10, 40, 30);
-
-    setDrawColor(255, 255, 255);
-    //circle(300, 200, 50);
-    fillCircle(350, 200, 50);
 }

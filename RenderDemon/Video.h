@@ -25,10 +25,6 @@ public:
     void line(int x1, int y1, int x2, int y2);
     void rect(int x1, int y1, int x2, int y2);
     void fillRect(int x1, int y1, int x2, int y2);
-    void circle(int x, int y, int r, int segments = 21);
-    void fillCircle(int x, int y, int r, int segments = 21);
-    void ellipse(int x, int y, int rx, int ry, int segments = 21);
-    void fillEllipse(int x, int y, int rx, int ry, int segments = 21);
 
     void test();
 
