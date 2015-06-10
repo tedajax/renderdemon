@@ -180,10 +180,10 @@ void Video::fillEllipse(int x, int y, int rx, int ry, int segments)
     for (int i = from; i < to; ++i)
     {
         f32 p = f32(i - from) / (f32)ry;
-        f32 w = cosf(p * 2) * rx;
+        f32 w = acosf(p * 2.f - 1.f) * rx;
 
-        int halfw = w / 2;
-        hline(y, -halfw, halfw);
+        int halfw = w / 2.f;
+        hline(i, x - halfw, x + halfw);
     }
 }
 
@@ -205,7 +205,7 @@ void Video::test()
     rect(50, 50, 150, 75);
     fillRect(50, 10, 40, 30);
 
-    setDrawColor(0, 0, 255);
-    circle(300, 200, 50);
+    setDrawColor(255, 255, 255);
+    //circle(300, 200, 50);
     fillCircle(350, 200, 50);
 }
