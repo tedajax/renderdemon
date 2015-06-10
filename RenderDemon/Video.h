@@ -26,11 +26,15 @@ public:
     void rect(int x1, int y1, int x2, int y2);
     void fillRect(int x1, int y1, int x2, int y2);
 
+    void floodFill(int x, int y);
+
     void test();
 
 private:
     uint32* getPixel(int x, int y);
     void setPixel(uint32* p);
+    SDL_Color getPixelColor(int x, int y);
+    void floodFillRecur(int x, int y);
 
 private:
     int m_width;
@@ -40,3 +44,10 @@ private:
     SDL_Color m_drawColor;
     SDL_Color m_clearColor;
 };
+
+inline bool rgbEqual(const SDL_Color& c1, const SDL_Color& c2)
+{
+    return c1.r == c2.r &&
+        c1.g == c2.g &&
+        c1.b == c2.b;
+}

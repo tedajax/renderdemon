@@ -62,6 +62,25 @@ void Video::setPixel(uint32* p)
     *p = m_drawColor.r + (m_drawColor.g << 8) + (m_drawColor.b << 16);
 }
 
+SDL_Color Video::getPixelColor(int x, int y)
+{
+    uint32* p = getPixel(x, y);
+    if (!p)
+    {
+        const SDL_Color cBlack = { 0, 0, 0, 255 };
+        return cBlack;
+    }
+
+    SDL_Color color = {
+        *((uint8*)p + 3),
+        *((uint8*)p + 2),
+        *((uint8*)p + 1),
+        *((uint8*)p + 0),
+    };
+
+    return color;
+}
+
 void Video::pointc(int x, int y, int count)
 {
     uint32* p = getPixel(x, y);
@@ -142,6 +161,27 @@ void Video::fillRect(int x1, int y1, int x2, int y2)
     }
 }
 
+void Video::floodFill(int x, int y)
+{
+    floodFillRecur(x - 1, y);
+    floodFillRecur(x + 1, y);
+    floodFillRecur(x, y - 1);
+    floodFillRecur(x, y + 1);
+}
+
+void Video::floodFillRecur(int x, int y)
+{
+    if (rgbEqual(getPixelColor(x, y), m_drawColor))
+    {
+        return;
+    }
+
+    floodFillRecur(x - 1, y);
+    floodFillRecur(x + 1, y);
+    floodFillRecur(x, y - 1);
+    floodFillRecur(x, y + 1);
+}
+
 void Video::test()
 {
     /*setDrawColor(255, 0, 0);
@@ -158,5 +198,6 @@ void Video::test()
     point(107, 100);
     point(108, 100);
     rect(50, 50, 150, 75);
+    floodFillRecur(55, 55);
     fillRect(50, 10, 40, 30);
 }
