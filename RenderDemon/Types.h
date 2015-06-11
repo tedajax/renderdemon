@@ -16,3 +16,10 @@ typedef unsigned int uint;
 
 typedef float f32;
 typedef double f64;
+
+struct Point
+{
+    Point() : x(0), y(0) {}
+    Point(int x_, int y_) : x(x_), y(y_) {}
+    int x, y;
+};

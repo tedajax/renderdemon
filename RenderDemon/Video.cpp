@@ -1,6 +1,6 @@
 #include "Video.h"
+#include "Util.h"
 #include <cmath>
-#include <algorithm>
 
 Video::Video(int width, int height, SDL_Renderer* renderer)
     : m_width(width),
@@ -122,7 +122,7 @@ void Video::points(int* data, int count)
 
 void Video::vline(int x, int y1, int y2)
 {
-    if (y1 > y2) { std::swap(y1, y2); }
+    if (y1 > y2) { Util::Swap(y1, y2); }
     for (int y = y1; y <= y2; ++y)
     {
         point(x, y);
@@ -131,7 +131,7 @@ void Video::vline(int x, int y1, int y2)
 
 void Video::hline(int y, int x1, int x2)
 {
-    if (x1 > x2) { std::swap(x1, x2); }
+    if (x1 > x2) { Util::Swap(x1, x2); }
     int right = x2;
     if (right > m_width) { right = m_width; }
     pointc(x1, y, (right - x1));
@@ -194,6 +194,14 @@ void Video::fillRect(int x1, int y1, int x2, int y2)
 
 void Video::triangle(int x1, int y1, int x2, int y2, int x3, int y3)
 {
+    Point points[3] = {
+        { x1, y1 },
+        { x2, y2 },
+        { x3, y3 },
+    };
+
+    Util::ArraySort<Point>(points, 3, [](const Point* p1, const Point* p2){ return p1->y < p2->y; });
+
 
 }
 
@@ -207,6 +215,9 @@ void Video::quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
         x1, y1
     };
     lines(data, 4);
+
+    triangle(x1, y1, x2, y2, x4, y4);
+    triangle(x2, y2, x3, y3, x4, y4);
 }
 
 void Video::floodFill(int x, int y)
@@ -250,11 +261,9 @@ void Video::test()
     setDrawColor(0, 255, 0);
     point(100, 10);
     rect(50, 50, 150, 75);
-    floodFill(53, 53);
 
     setDrawColor(255, 0, 255);
     quad(200, 300, 500, 325, 450, 450, 250, 475);
-    floodFill(250, 350);
 
     setDrawColor(255, 255, 0);
     line(200, 200, 300, 250);
@@ -268,6 +277,9 @@ void Video::test()
     int x2 = (int)(cosf(angle) * r) + px;
     int y2 = (int)(sinf(angle) * r) + py;
     line(px, py, x2, y2);
+
+    triangle(px - 50, py, px + 50, py, x2, y2);
+
 
   
 }
