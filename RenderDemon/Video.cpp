@@ -167,6 +167,15 @@ void Video::line(int x1, int y1, int x2, int y2)
     }
 }
 
+void Video::lines(int* data, int segments)
+{
+    for (int i = 0; i < segments; ++i)
+    {
+        line(data[(i * 2) + 0], data[(i * 2) + 1],
+             data[((i + 1) * 2) + 0], data[((i + 1) * 2) + 1]);
+    }
+}
+
 void Video::rect(int x1, int y1, int x2, int y2)
 {
     line(x1, y1, x2, y1);
@@ -183,25 +192,54 @@ void Video::fillRect(int x1, int y1, int x2, int y2)
     }
 }
 
-void Video::floodFill(int x, int y)
+void Video::triangle(int x1, int y1, int x2, int y2, int x3, int y3)
 {
-    floodFillRecur(x - 1, y);
-    floodFillRecur(x + 1, y);
-    floodFillRecur(x, y - 1);
-    floodFillRecur(x, y + 1);
+
 }
 
-void Video::floodFillRecur(int x, int y)
+void Video::quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
 {
-    if (rgbEqual(getPixelColor(x, y), m_drawColor))
+    int data[10] = {
+        x1, y1,
+        x2, y2,
+        x3, y3,
+        x4, y4,
+        x1, y1
+    };
+    lines(data, 4);
+}
+
+void Video::floodFill(int x, int y)
+{
+    uint32* p = getPixel(x, y);
+    if (!p) { return; }
+
+    uint32 target = *p;
+    floodFillRecur(x, y, target);
+}
+
+void Video::floodFillRecur(int x, int y, uint32 target)
+{
+    uint32* p = getPixel(x, y);
+    if (!p) { return; }
+
+    if (*p != target)
     {
         return;
     }
 
-    floodFillRecur(x - 1, y);
-    floodFillRecur(x + 1, y);
-    floodFillRecur(x, y - 1);
-    floodFillRecur(x, y + 1);
+    uint32 dc = m_drawColor.r + (m_drawColor.g << 8) + (m_drawColor.b << 16);
+    if (dc == (target & 0x00FFFFFF))
+    {
+        return;
+    }
+
+    *p = dc;
+
+    floodFillRecur(x - 1, y, target);
+    floodFillRecur(x + 1, y, target);
+    floodFillRecur(x, y - 1, target);
+    floodFillRecur(x, y + 1, target);
 }
 
 void Video::test()
@@ -212,6 +250,11 @@ void Video::test()
     setDrawColor(0, 255, 0);
     point(100, 10);
     rect(50, 50, 150, 75);
+    floodFill(53, 53);
+
+    setDrawColor(255, 0, 255);
+    quad(200, 300, 500, 325, 450, 450, 250, 475);
+    floodFill(250, 350);
 
     setDrawColor(255, 255, 0);
     line(200, 200, 300, 250);
@@ -226,5 +269,5 @@ void Video::test()
     int y2 = (int)(sinf(angle) * r) + py;
     line(px, py, x2, y2);
 
-    
+  
 }

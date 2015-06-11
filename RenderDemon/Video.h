@@ -23,8 +23,11 @@ public:
     void vline(int x, int y1, int y2);
     void hline(int y, int x1, int x2);
     void line(int x1, int y1, int x2, int y2);
+    void lines(int* data, int segments);
     void rect(int x1, int y1, int x2, int y2);
     void fillRect(int x1, int y1, int x2, int y2);
+    void triangle(int x1, int y1, int x2, int y2, int x3, int y3);
+    void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 
     void floodFill(int x, int y);
 
@@ -34,7 +37,7 @@ private:
     uint32* getPixel(int x, int y);
     void setPixel(uint32* p);
     SDL_Color getPixelColor(int x, int y);
-    void floodFillRecur(int x, int y);
+    void floodFillRecur(int x, int y, uint32 target);
 
 private:
     int m_width;
