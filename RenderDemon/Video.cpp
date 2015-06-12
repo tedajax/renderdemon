@@ -202,7 +202,78 @@ void Video::triangle(int x1, int y1, int x2, int y2, int x3, int y3)
 
     Util::ArraySort<Point>(points, 3, [](const Point* p1, const Point* p2){ return p1->y < p2->y; });
 
+    if (points[1].y == points[2].y)
+    {
+        triangleFlatBottom(points);
+    }
+    else if (points[0].y == points[1].y)
+    {
+        triangleFlatTop(points);
+    }
+    else
+    {
+        int x4 = points[0].x + (int)((f32)(points[1].y - points[0].y) / (f32)(points[2].y - points[0].y)) * (points[2].x - points[0].x);
+        int y4 = points[1].y;
 
+        Point top[3] = {
+            points[0],
+            points[1],
+            { x4, y4 },
+        };
+
+        Point bottom[3] = {
+            points[1],
+            { x4, y4 },
+            points[2],
+        };
+
+        triangleFlatBottom(top);
+        triangleFlatTop(bottom);
+    }
+}
+
+void Video::triangleFlatBottom(Point* points)
+{
+    int topx = points[0].x;
+    int topy = points[0].y;
+    int y = points[1].y;
+    int leftx = points[1].x;
+    int rightx = points[2].x;
+
+    f32 mleft = (f32)(leftx - topx) / (f32)(y - topy);
+    f32 mright = (f32)(rightx - topx) / (f32)(y - topy);
+
+    f32 left = topx;
+    f32 right = topx;
+
+    for (int i = topy; i <= y; ++i)
+    {
+        hline(i, (int)left, (int)right);
+        left += mleft;
+        right += mright;
+    }
+}
+
+void Video::triangleFlatTop(Point* points)
+{
+    int botx = points[2].x;
+    int boty = points[2].y;
+    int y = points[0].y;
+    int leftx = points[0].x;
+    int rightx = points[1].x;
+
+    f32 mleft = (f32)(botx - leftx) / (f32)(boty - y);
+    f32 mright = (f32)(botx - rightx) / (f32)(boty - y);
+
+    f32 left = botx;
+    f32 right = botx;
+
+    for (int i = boty; i > y; --i)
+    {
+        hline(i, (int)left, (int)right);
+        left -= mleft;
+        right -= mright;
+    }
 }
 
 void Video::quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
@@ -263,13 +334,13 @@ void Video::test()
     rect(50, 50, 150, 75);
 
     setDrawColor(255, 0, 255);
-    quad(200, 300, 500, 325, 450, 450, 250, 475);
+    //quad(200, 300, 500, 325, 450, 450, 250, 475);
 
     setDrawColor(255, 255, 0);
     line(200, 200, 300, 250);
 
     static f32 angle = 0.f;
-    angle += 0.01f;
+    angle += 1.f;
 
     int px = 250;
     int py = 250;
@@ -278,8 +349,10 @@ void Video::test()
     int y2 = (int)(sinf(angle) * r) + py;
     line(px, py, x2, y2);
 
-    triangle(px - 50, py, px + 50, py, x2, y2);
+    int tx2 = (int)(cosf(angle * 1.f) * r) + px + 250;
+    int ty2 = (int)(sinf(angle * 1.f) * r) + py;
+    //triangle(px + 200, py, px + 300, py, tx2, ty2);
 
-
+    triangle(px + 200, py + 150, px + 300, py + 100, tx2, ty2 + 150);
   
 }

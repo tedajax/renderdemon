@@ -81,7 +81,7 @@ namespace Util
 
         while (--count > 0)
         {
-            Swap(&data[0], &data[count]);
+            Swap(data[0], data[count]);
             Internal::ArraySortSection(data, 0, count, lessThanFunc);
         }
     }

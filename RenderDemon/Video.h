@@ -37,7 +37,12 @@ private:
     uint32* getPixel(int x, int y);
     void setPixel(uint32* p);
     SDL_Color getPixelColor(int x, int y);
+    
+    // drawing helpers
     void floodFillRecur(int x, int y, uint32 target);
+    void triangleFlatBottom(Point* points);
+    void triangleFlatTop(Point* points);
+
 
 private:
     int m_width;
