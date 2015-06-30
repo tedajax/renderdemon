@@ -125,8 +125,15 @@ struct TestRenderer
             f32 x2 = -tx2 * 16 / tz2, y2a = -50 / tz2, y2b = 50 / tz2;
 
             ctx->setDrawColor(14);
-            ctx->triangle(50 + x1, 50 + y1a, 50 + x2, 50 + y2a, 50 + x1, 50 + y1b);
-            ctx->triangle(50 + x2, 50 + y2a, 50 + x2, 50 + y2b, 50 + x1, 50 + y1b);
+            f32 m = (f32)(y1b - y1a) / (f32)(y2b - y2a);
+            for (int i = 50 + x1; i < 50 + x2; ++i)
+            {
+                f32 n = (f32)(i - (50 + x1)) / (f32)((x1 + 50) - (x2 + 50));
+                f32 d = (m / 2.f) * n;
+                ctx->vline(i, y1a + 50 - d, y1b + 50 + d);
+            }
+            //ctx->triangle(50 + x1, 50 + y1a, 50 + x2, 50 + y2a, 50 + x1, 50 + y1b);
+            //ctx->triangle(50 + x2, 50 + y2a, 50 + x2, 50 + y2b, 50 + x1, 50 + y1b);
             //ctx->quad(50 + x1, 50 + y1a, 50 + x2, 50 + y2a, 50 + x1, 50 + y1b, 50 + x2, 50 + y2b);
             //ctx->line(50 + x1, 50 + y1a, 50 + x2, 50 + y2a);
             //ctx->line(50 + x1, 50 + y1b, 50 + x2, 50 + y2b);
